@@ -35,15 +35,16 @@ async def on_message(message):
     # Display all messages in terminal
     print('[' + str(message.channel) + '] ' + str(message.author) + ': ' +  str(message.content))
 
-    #await client.add_reaction(message, '🍆')
-
     # Stops bot from acting upon itself.
     if message.author == client.user:
         return
 
+    def quote_embed():
+        em = discord.Embed(description=message.content, color=0x6DC066)
+        em.set_author(name=message.author, icon_url=message.author.avatar_url)
+
     # Chooses random number between 1 & 1000
     if message.content.startswith('$randint'):
-        #await client.send_typing(message.channel)
         await client.send_message(message.channel, randint(1, 1000))
 
     # Repeats anything the user says
@@ -68,14 +69,38 @@ async def on_message(message):
         await client.send_message(message.channel, embed=em)
         f.close()
 
-    if message.content.startswith('$test'):
-        print(client.messages)
+    # Quote message
+    if message.content.startswith('$q'):
+        tmp = message.content.replace('.q', '').strip().lower()
+        await client.delete_message(message)
 
-    if message.content.startswith('!print'):
+        async for message in client.logs_from(message.channel, limit=50):
+            if message.content.lower().startswith(tmp):
+                em = discord.Embed(description=message.content, color=0x6DC066)
+                em.set_author(name=message.author, icon_url=message.author.avatar_url)
+                await client.send_message(message.channel, embed=em)
+                return
+
+    if message.content.startswith('.test'):
+        test()
+
+
+    if message.content.startswith('$rand'):
+        random = randint(1, 10000)
         counter = 0
-        async for messages in client.logs_from(client.channel, limit=500):
-            print('test')
+
+        async for message in client.logs_from(message.channel, limit=10000):
+
             counter += 1
+
+            if counter == random:
+                em = discord.Embed(description=message.content, color=0x6DC066)
+                em.set_author(name=message.author, icon_url=message.author.avatar_url)
+                await client.send_message(message.channel, embed=em)
+                return
+            #else:
+            #    await client.send_message(message.channel, 'Nothing found.')
+            #    return
 
 # Fetches bot token from external .txt file
 f = open('token.txt', 'r')
