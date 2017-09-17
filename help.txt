@@ -1,0 +1,3 @@
+$randint - Displays a random number between 1 and 1,000
+$repeat - Repeats anything you say.
+.q - Quote a previous message (Use the text that the message starts with)
