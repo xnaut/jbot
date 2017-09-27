@@ -1,5 +1,5 @@
 # Imports
-#from datetime import datetime
+import datetime
 from random import randint
 
 pf = '.'
@@ -17,18 +17,31 @@ pf_equote = pf + 'eq'
 green = 0x6DC066
 yellow = 0xfffb4c
 
+# Functions
+def time(time):
+    hour = (int(time.strftime('%I')) - 5) # Temporary fix.
+    hour = str(hour)
+
+    if time.strftime('%d') == str(datetime.datetime.now().day):
+        return time.strftime('Today at ' + hour + ':%M %p')
+
+    else:
+        return time.strftime('%b %d at ' + hour + ':%M %p')
+
+
 async def commands(discord, message, client):
     async def quote_embed(author, channel, color):
         em = discord.Embed(description=message.content, color=color)
         em.set_author(name=author.display_name, icon_url=author.avatar_url)
-        em.set_footer(text=message.timestamp)
+        em.set_footer(text=time(message.timestamp))
+
         await client.send_message(channel, embed=em)
 
     # COMMAND: Quote message
     if message.content.startswith(pf_quote):
         tmp = message.content.replace(pf_quote, '').strip().lower()
 
-        async for message in client.logs_from(message.channel, limit=10000):
+        async for message in client.logs_from(message.channel, limit=500):
 
             if tmp in message.content.lower() and message.content.startswith(pf_quote) == False:
                 await quote_embed(message.author, message.channel, green)
@@ -76,7 +89,3 @@ async def commands(discord, message, client):
                         if best_match[1] == 100.0:
                             await quote_embed(message.author, message.channel, yellow)
                             break
-
-
-            #print(matches)
-            #print(percent(matches, len(tmp2)))
