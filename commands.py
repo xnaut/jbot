@@ -2,31 +2,25 @@
 import datetime
 from random import randint
 
-pf = '.'
+PF= '.'
 
 # Main commands
-pf_help = pf + 'help'
-pf_randint = pf +'randint'
-pf_repeat = pf + 'repeat'
-pf_quote = pf + 'q'
-
-# Experimental Commands
-pf_equote = pf + 'eq'
+PF_HELP = PF+ 'help'
+PF_RANDINT = PF+'randint'
+PF_REPEAT = PF+ 'repeat'
+PF_QUOTE = PF+ 'q'
 
 # Colors
-green = 0x6DC066
-yellow = 0xfffb4c
+GREEN = 0x6DC066
+YELLOW = 0xfffb4c
 
 # Functions
 def time(time):
-    hour = (int(time.strftime('%I')) - 5) # Temporary fix.
-    hour = str(hour)
-
     if time.strftime('%d') == str(datetime.datetime.now().day):
-        return time.strftime('Today at ' + hour + ':%M %p')
+        return time.strftime('Today at ' + '%H:%M %p GMT+0')
 
     else:
-        return time.strftime('%b %d at ' + hour + ':%M %p')
+        return time.strftime('%b %d at %H:%M %p GMT+0')
 
 
 async def commands(discord, message, client):
@@ -38,54 +32,27 @@ async def commands(discord, message, client):
         await client.send_message(channel, embed=em)
 
     # COMMAND: Quote message
-    if message.content.startswith(pf_quote):
-        tmp = message.content.replace(pf_quote, '').strip().lower()
+    if message.content.startswith(PF_QUOTE):
+        tmp = message.content.replace(PF_QUOTE, '').strip().lower()
 
-        async for message in client.logs_from(message.channel, limit=500):
+        async for message in client.logs_from(message.channel, limit=10000):
 
-            if tmp in message.content.lower() and message.content.startswith(pf_quote) == False:
-                await quote_embed(message.author, message.channel, green)
+            if tmp in message.content.lower() and message.content.startswith(PF_QUOTE) == False:
+                await quote_embed(message.author, message.channel, GREEN)
                 return
 
     # COMMAND: Help
-    if message.content.startswith(pf_help):
+    if message.content.startswith(PF_HELP):
         f = open('help.txt', 'r')
         em = discord.Embed(title='JBot Help', description=f.read(), color=0x6DC066)
         await client.send_message(message.channel, embed=em)
         f.close()
 
     # COMMAND: Repeats anything the user says
-    if message.content.startswith(pf_repeat):
+    if message.content.startswith(PF_REPEAT):
         await client.delete_message(message)
         await client.send_message(message.channel, message.content.replace('$repeat', ''))
 
     # COMMAND: Chooses random number between 1 & 1000
-    if message.content.startswith(pf_randint):
+    if message.content.startswith(PF_RANDINT):
         await client.send_message(message.channel, randint(1, 1000))
-
-    # -- EXPERIMENTAL COMMANDS --
-    # Experimental Quote
-    def percent(a, b):
-        return 100 * a / b
-
-    if message.content.startswith(pf_equote):
-        best_match = ['', 0]
-        tmp = message.content.replace(pf_equote, '').lower().split()
-
-        async for message in client.logs_from(message.channel, limit=500):
-            matches = 0
-            tmp2 = message.content.lower().split()
-
-            if message.content.startswith(pf_equote) == False:
-                for i in range(0, len(tmp)):
-                    for j in range(0, len(tmp2)):
-                        if tmp[i] == tmp2[j]:
-                            matches += 1
-
-                    if percent(matches, len(tmp)) > best_match[1]:
-                        best_match[0] = message.content
-                        best_match[1] = percent(matches, len(tmp))
-
-                        if best_match[1] == 100.0:
-                            await quote_embed(message.author, message.channel, yellow)
-                            break
