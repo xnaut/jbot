@@ -23,8 +23,8 @@ async def on_message(message):
     await commands(discord, message, client)
 
 # Fetches bot token from external .txt file
-f = open('token.txt', 'r')
-token = f.read().strip()
-f.close()
+with open('token.txt', 'r') as f:
+    token = f.read().strip()
+
 client.run(token)
 client.close()

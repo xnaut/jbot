@@ -6,7 +6,7 @@ PF= '.'
 
 # Main commands
 PF_HELP = PF+ 'help'
-PF_RANDINT = PF+'randint'
+PF_RANDINT = PF+'randint' # Change name?
 PF_REPEAT = PF+ 'repeat'
 PF_QUOTE = PF+ 'q'
 
@@ -43,10 +43,10 @@ async def commands(discord, message, client):
 
     # COMMAND: Help
     if message.content.startswith(PF_HELP):
-        f = open('help.txt', 'r')
-        em = discord.Embed(title='JBot Help', description=f.read(), color=0x6DC066)
-        await client.send_message(message.channel, embed=em)
-        f.close()
+        with open('help.txt', 'r') as f:
+            em = discord.Embed(title='JBot Help', description=f.read(), color=0x6DC066)
+            await client.send_message(message.channel, embed=em)
+
 
     # COMMAND: Repeats anything the user says
     if message.content.startswith(PF_REPEAT):
@@ -55,4 +55,4 @@ async def commands(discord, message, client):
 
     # COMMAND: Chooses random number between 1 & 1000
     if message.content.startswith(PF_RANDINT):
-        await client.send_message(message.channel, randint(1, 1000))
+        await client.send_message(message.channel, randint(0, 10001))
