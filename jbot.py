@@ -14,7 +14,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     # Display all messages in terminal
-    print('[' + str(message.channel) + '] ' + str(message.author) + ': ' +  str(message.content))
+    print('[{0}] {1}: {2}'.format(message.channel, message.author, message.content))
 
     # Stops the bot from acting upon itself
     if message.author == client.user:

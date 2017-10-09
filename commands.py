@@ -2,17 +2,18 @@
 import datetime
 from random import randint
 
-PF= '.'
+PF= '.' # The symbol at the beginning of all commands
 
 # Main commands
-PF_HELP = PF+ 'help'
-PF_RANDINT = PF+'randint' # Change name?
-PF_REPEAT = PF+ 'repeat'
-PF_QUOTE = PF+ 'q'
+PF_HELP = PF + 'help'
+PF_RANDNUM = PF + 'randnum'
+PF_REPEAT = PF + 'repeat'
+PF_QUOTE = PF + 'q'
 
-# Colors
-GREEN = 0x6DC066
-YELLOW = 0xfffb4c
+colors = {
+    "green": 0x6DC066,
+    "yellow": 0xfffb4c
+}
 
 # Functions
 def time(time):
@@ -21,7 +22,6 @@ def time(time):
 
     else:
         return time.strftime('%b %d at %H:%M %p GMT+0')
-
 
 async def commands(discord, message, client):
     async def quote_embed(author, channel, color):
@@ -36,23 +36,24 @@ async def commands(discord, message, client):
         tmp = message.content.replace(PF_QUOTE, '').strip().lower()
 
         async for message in client.logs_from(message.channel, limit=10000):
-
             if tmp in message.content.lower() and message.content.startswith(PF_QUOTE) == False:
-                await quote_embed(message.author, message.channel, GREEN)
+                await quote_embed(message.author, message.channel, colors['green'])
                 return
 
     # COMMAND: Help
     if message.content.startswith(PF_HELP):
         with open('help.txt', 'r') as f:
-            em = discord.Embed(title='JBot Help', description=f.read(), color=0x6DC066)
+            em = discord.Embed(title='JBot Help', description=f.read(), color=colors['green'])
             await client.send_message(message.channel, embed=em)
-
 
     # COMMAND: Repeats anything the user says
     if message.content.startswith(PF_REPEAT):
-        await client.delete_message(message)
-        await client.send_message(message.channel, message.content.replace('$repeat', ''))
+        try:
+            await client.delete_message(message)
+
+        finally:
+            await client.send_message(message.channel, message.content.replace('.repeat', ''))
 
     # COMMAND: Chooses random number between 1 & 1000
-    if message.content.startswith(PF_RANDINT):
-        await client.send_message(message.channel, randint(0, 10001))
+    if message.content.startswith(PF_RANDNUM):
+        await client.send_message(message.channel, randint(0, 10000))
