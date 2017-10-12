@@ -1,5 +1,6 @@
 import asyncio, discord
 from commands import commands
+from fun import fun
 
 client = discord.Client()
 
@@ -9,6 +10,8 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+
+COMMAND_PREFIX = '.'
 
 # Bot commands
 @client.event
@@ -20,7 +23,8 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    await commands(discord, message, client)
+    await commands(COMMAND_PREFIX, discord, message, client)
+    await fun(COMMAND_PREFIX, discord, message, client)
 
 # Fetches bot token from external .txt file
 with open('token.txt', 'r') as f:
