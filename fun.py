@@ -18,32 +18,31 @@ async def fun(command_prefix, discord, message, client):
         finally:
             await client.send_message(message.channel, message.content.replace(PF_REPEAT, ''))
 
-    # COMMAND: Chooses random number between 1 & 1000
+    # COMMAND: Chooses random number between 1 & 10,000
     if message.content.startswith(PF_RANDNUM):
         await client.send_message(message.channel, randint(0, 10000))
 
     # COMMAND: Rock, paper, scissors
     if message.content.startswith(PF_RPS):
-        rps = ('rock', 'paper', 'scissors')
+        rps = {
+            'rock': 'paper',
+            'paper': 'scissors',
+            'scissors': 'rock'
+        }
 
-        bot_answer = rps[randint(0, 2)]
-        player_answer = message.content.replace(PF_RPS, '').strip()
+        bot_ans = list(rps)[randint(0, 2)]
+        user_ans = message.content.replace(PF_RPS, '').strip()
 
-        print(bot_answer)
-        print(player_answer)
+        if user_ans in rps:
+            if bot_ans == user_ans:
+                await client.send_message(message.channel, 'I chose {0}. We tied!'.format(bot_ans))
+                return
+                
+            if bot_ans == rps[user_ans]:
+                await client.send_message(message.channel, 'I chose {0}. You lose!'.format(bot_ans))
 
-        if player_answer in rps:
-            if player_answer == bot_answer:
-                await client.send_message(message.channel, 'Tie!')
-
-            if player_answer == rps[0] and bot_answer == rps[1]:
-                await client.send_message(message.channel, 'I chose {0}, you lose!'.format(rps[1]))
-
-            if player_answer == rps[1] and bot_answer == rps[2]:
-                await client.send_message(message.channel, 'I chose {0}, you lose!'.format(rps[2]))
-
-            if player_answer == rps[2] and bot_answer == rps[1]:
-                await client.send_message(message.channel, 'I chose {0}, you lose!'.format(rps[1]))
+            else:
+                await client.send_message(message.channel, 'I chose {0}. You win!'.format(bot_ans))
 
         else:
             await client.send_message(message.channel, 'Invalid answer')
