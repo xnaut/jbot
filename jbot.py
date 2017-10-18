@@ -34,11 +34,13 @@ async def on_message(message):
     await fun(COMMAND_PREFIX, discord, message, client)
 
     # Useful commands. e.g. web search and unit conversion.
-    #await utility(COMMAND_PREFIX, discord, message, client)
+    await utility(COMMAND_PREFIX, discord, message, client)
 
     if message.content.startswith('.uptime'):
         await client.send_message(message.channel, '{0} seconds'.format(round(time.time() - start_time)))
 
+#    if message.content.startswith('.exit'):
+#        raise SystemExit
 
 # Fetches bot token from external .txt file
 with open('token.txt', 'r') as f:
