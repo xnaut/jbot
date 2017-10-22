@@ -2,20 +2,23 @@
 import datetime
 from random import randint
 
-PF= '.' # The symbol at the beginning of all commands
-
 colors = {
     "green": 0x6DC066,
     "yellow": 0xfffb4c
 }
 
 # Functions
+def convert_color(user_color):
+
+    return '0x' + str(user_color).replace('#', '')
+
+
 def time(time):
     if time.strftime('%d') == str(datetime.datetime.now().day):
-        return time.strftime('Today at ' + '%H:%M %p GMT+0')
+        return time.strftime('Today at ' + '%H:%M %p')
 
     else:
-        return time.strftime('%b %d at %H:%M %p GMT+0')
+        return time.strftime('%b %d at %H:%M %p')
 
 async def commands(command_prefix, discord, message, client):
     # Main commands
@@ -41,5 +44,9 @@ async def commands(command_prefix, discord, message, client):
 
         async for message in client.logs_from(message.channel, limit=10000):
             if tmp in message.content.lower() and message.content.startswith(PF_QUOTE) == False:
-                await quote_embed(message.author, message.channel, colors['green'])
+                await quote_embed(message.author, message.channel, message.author.color)
                 return
+
+    if message.content.startswith('.test'):
+        await quote_embed(message.author, message.channel, message.author.color)
+        await quote_embed(message.author, message.channel, colors['green'])
